@@ -1,23 +1,23 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT),
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
+  host: process.env.EMAIL_HOST,
+  port: Number(process.env.EMAIL_PORT),
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 export const sendVerificationEmail = async (to, token) => {
-    const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+  const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
 
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to,
-        subject: "Verify Your Email",
-        html: `
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to,
+    subject: "Verify Your Email",
+    html: `
       <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
         <h2 style="color: #1a1a1a;">Email Verification</h2>
         <p style="color: #4a4a4a; line-height: 1.6;">
@@ -32,5 +32,30 @@ export const sendVerificationEmail = async (to, token) => {
         </p>
       </div>
     `,
-    });
+  });
+};
+
+export const sendResetEmail = async (to, token) => {
+  const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to,
+    subject: "Reset Your Password",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+        <h2 style="color: #1a1a1a;">Password Reset</h2>
+        <p style="color: #4a4a4a; line-height: 1.6;">
+          Click the button below to reset your password. This link will expire in 15 minutes.
+        </p>
+        <a href="${resetUrl}"
+           style="display: inline-block; padding: 12px 24px; background-color: #1a1a1a; color: #ffffff; text-decoration: none; border-radius: 4px; margin-top: 16px;">
+          Reset Password
+        </a>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">
+          If you did not request a password reset, please ignore this email.
+        </p>
+      </div>
+    `,
+  });
 };
