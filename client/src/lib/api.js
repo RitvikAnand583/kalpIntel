@@ -36,4 +36,10 @@ export const api = {
 
     logoutAll: () =>
         request("/session/logout-all", { method: "POST" }),
+
+    getDevices: () =>
+        request("/session/devices"),
+
+    revokeSession: (sessionId) =>
+        request(`/session/${sessionId}`, { method: "DELETE" }),
 };

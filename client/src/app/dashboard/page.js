@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import Button from "@/components/Button";
 
@@ -57,12 +58,18 @@ export default function Dashboard() {
                 <p style={{ color: "#666", fontSize: "14px", marginBottom: "24px" }}>
                     You are logged in. This is a protected page.
                 </p>
-                <div style={{ display: "flex", gap: "12px" }}>
+                <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
                     <Button onClick={handleLogout}>Logout</Button>
                     <Button onClick={handleLogoutAll} variant="secondary">
                         Logout All Devices
                     </Button>
                 </div>
+                <Link
+                    href="/devices"
+                    style={{ fontSize: "14px", color: "#1a1a1a" }}
+                >
+                    Manage Devices
+                </Link>
             </div>
         </div>
     );

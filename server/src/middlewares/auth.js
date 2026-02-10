@@ -26,6 +26,7 @@ const authenticate = async (req, res, next) => {
 
         req.userId = decoded.userId;
         req.jti = decoded.jti;
+        req.sessionId = session._id.toString();
 
         next();
     } catch (err) {
