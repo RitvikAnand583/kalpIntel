@@ -1,0 +1,21 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+
+export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    api.getMe()
+      .then(() => router.replace("/dashboard"))
+      .catch(() => router.replace("/login"));
+  }, [router]);
+
+  return (
+    <div className="auth-container">
+      <p>Loading...</p>
+    </div>
+  );
+}

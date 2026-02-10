@@ -1,0 +1,36 @@
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT),
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
+
+export const sendVerificationEmail = async (to, token) => {
+    const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to,
+        subject: "Verify Your Email",
+        html: `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+        <h2 style="color: #1a1a1a;">Email Verification</h2>
+        <p style="color: #4a4a4a; line-height: 1.6;">
+          Click the button below to verify your email address. This link will expire in 24 hours.
+        </p>
+        <a href="${verificationUrl}"
+           style="display: inline-block; padding: 12px 24px; background-color: #1a1a1a; color: #ffffff; text-decoration: none; border-radius: 4px; margin-top: 16px;">
+          Verify Email
+        </a>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">
+          If you did not create an account, please ignore this email.
+        </p>
+      </div>
+    `,
+    });
+};
