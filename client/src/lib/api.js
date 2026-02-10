@@ -30,4 +30,10 @@ export const api = {
 
     getMe: () =>
         request("/auth/me"),
+
+    logout: () =>
+        request("/session/logout", { method: "POST" }),
+
+    logoutAll: () =>
+        request("/session/logout-all", { method: "POST" }),
 };

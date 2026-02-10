@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import Button from "@/components/Button";
 
 export default function Dashboard() {
     const router = useRouter();
@@ -15,6 +16,24 @@ export default function Dashboard() {
             .catch(() => router.replace("/login"))
             .finally(() => setLoading(false));
     }, [router]);
+
+    const handleLogout = async () => {
+        try {
+            await api.logout();
+            router.replace("/login");
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    const handleLogoutAll = async () => {
+        try {
+            await api.logoutAll();
+            router.replace("/login");
+        } catch (err) {
+            alert(err.message);
+        }
+    };
 
     if (loading) {
         return (
@@ -35,9 +54,15 @@ export default function Dashboard() {
                     <p><strong>Email:</strong> {user.email}</p>
                     <p><strong>Verified:</strong> {user.isVerified ? "Yes" : "No"}</p>
                 </div>
-                <p style={{ color: "#666", fontSize: "14px" }}>
+                <p style={{ color: "#666", fontSize: "14px", marginBottom: "24px" }}>
                     You are logged in. This is a protected page.
                 </p>
+                <div style={{ display: "flex", gap: "12px" }}>
+                    <Button onClick={handleLogout}>Logout</Button>
+                    <Button onClick={handleLogoutAll} variant="secondary">
+                        Logout All Devices
+                    </Button>
+                </div>
             </div>
         </div>
     );
