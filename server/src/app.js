@@ -7,7 +7,14 @@ import sessionRoutes from "./routes/session.js";
 const app = express();
 
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        const allowed = [process.env.CLIENT_URL];
+        if (allowed.includes(origin) || origin.endsWith(".vercel.app")) {
+            return callback(null, true);
+        }
+        callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
 }));
 
