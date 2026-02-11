@@ -1,10 +1,36 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+const getToken = () => {
+    if (typeof window !== "undefined") {
+        return localStorage.getItem("token");
+    }
+    return null;
+};
+
+const setToken = (token) => {
+    if (typeof window !== "undefined") {
+        localStorage.setItem("token", token);
+    }
+};
+
+const removeToken = () => {
+    if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+    }
+};
+
 const request = async (endpoint, options = {}) => {
+    const headers = {
+        "Content-Type": "application/json",
+    };
+
+    const token = getToken();
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_URL}${endpoint}`, {
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers,
         credentials: "include",
         ...options,
     });
@@ -30,17 +56,28 @@ export const api = {
     verifyEmail: (token) =>
         request(`/auth/verify-email/${token}`),
 
-    login: (body) =>
-        request("/auth/login", { method: "POST", body: JSON.stringify(body) }),
+    login: async (body) => {
+        const data = await request("/auth/login", { method: "POST", body: JSON.stringify(body) });
+        if (data.token) {
+            setToken(data.token);
+        }
+        return data;
+    },
 
     getMe: () =>
         request("/auth/me"),
 
-    logout: () =>
-        request("/session/logout", { method: "POST" }),
+    logout: async () => {
+        const data = await request("/session/logout", { method: "POST" });
+        removeToken();
+        return data;
+    },
 
-    logoutAll: () =>
-        request("/session/logout-all", { method: "POST" }),
+    logoutAll: async () => {
+        const data = await request("/session/logout-all", { method: "POST" });
+        removeToken();
+        return data;
+    },
 
     getDevices: () =>
         request("/session/devices"),
