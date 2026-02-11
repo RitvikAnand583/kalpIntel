@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
 
+console.log("[EMAIL CONFIG] BREVO_USER:", process.env.BREVO_USER || "NOT SET");
+console.log("[EMAIL CONFIG] BREVO_PASS:", process.env.BREVO_PASS ? process.env.BREVO_PASS.substring(0, 6) + "****" : "NOT SET");
+
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,
@@ -10,14 +13,21 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Verify SMTP connection on startup
+transporter.verify()
+  .then(() => console.log("[EMAIL] SMTP connection verified — ready to send emails"))
+  .catch((err) => console.error("[EMAIL] SMTP connection FAILED:", err.message));
+
 export const sendVerificationEmail = async (to, token) => {
   const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+  console.log(`[EMAIL] Sending verification email to: ${to}`);
 
-  await transporter.sendMail({
-    from: `KalpIntel <${process.env.BREVO_USER}>`,
-    to,
-    subject: "Verify Your Email",
-    html: `
+  try {
+    const info = await transporter.sendMail({
+      from: `KalpIntel <${process.env.BREVO_USER}>`,
+      to,
+      subject: "Verify Your Email",
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
         <h2 style="color: #1a1a1a;">Email Verification</h2>
         <p style="color: #4a4a4a; line-height: 1.6;">
@@ -32,17 +42,24 @@ export const sendVerificationEmail = async (to, token) => {
         </p>
       </div>
     `,
-  });
+    });
+    console.log(`[EMAIL] Verification email sent successfully! MessageId: ${info.messageId}`);
+  } catch (err) {
+    console.error(`[EMAIL] Failed to send verification email to ${to}:`, err.message);
+    throw err;
+  }
 };
 
 export const sendResetEmail = async (to, token) => {
   const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+  console.log(`[EMAIL] Sending reset email to: ${to}`);
 
-  await transporter.sendMail({
-    from: `KalpIntel <${process.env.BREVO_USER}>`,
-    to,
-    subject: "Reset Your Password",
-    html: `
+  try {
+    const info = await transporter.sendMail({
+      from: `KalpIntel <${process.env.BREVO_USER}>`,
+      to,
+      subject: "Reset Your Password",
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
         <h2 style="color: #1a1a1a;">Password Reset</h2>
         <p style="color: #4a4a4a; line-height: 1.6;">
@@ -57,5 +74,10 @@ export const sendResetEmail = async (to, token) => {
         </p>
       </div>
     `,
-  });
+    });
+    console.log(`[EMAIL] Reset email sent successfully! MessageId: ${info.messageId}`);
+  } catch (err) {
+    console.error(`[EMAIL] Failed to send reset email to ${to}:`, err.message);
+    throw err;
+  }
 };
