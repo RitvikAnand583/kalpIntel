@@ -14,6 +14,16 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
+        const trimmedName = name.trim();
+        if (trimmedName.length < 2) {
+            return res.status(400).json({ message: "Name must be at least 2 characters" });
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Please enter a valid email address" });
+        }
+
         if (password.length < 8) {
             return res.status(400).json({ message: "Password must be at least 8 characters" });
         }
@@ -27,7 +37,7 @@ export const register = async (req, res) => {
         const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
         const user = await User.create({
-            name,
+            name: trimmedName,
             email,
             password,
             verificationToken,
@@ -185,6 +195,11 @@ export const forgotPassword = async (req, res) => {
 
         if (!email) {
             return res.status(400).json({ message: "Email is required" });
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Please enter a valid email address" });
         }
 
         const user = await User.findOne({ email });

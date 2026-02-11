@@ -2,7 +2,7 @@
 
 import styles from "./FormInput.module.css";
 
-export default function FormInput({ label, id, type = "text", value, onChange, required = true }) {
+export default function FormInput({ label, id, type = "text", value, onChange, required = true, placeholder = "" }) {
     return (
         <div className={styles.group}>
             <label htmlFor={id} className={styles.label}>{label}</label>
@@ -13,6 +13,7 @@ export default function FormInput({ label, id, type = "text", value, onChange, r
                 onChange={onChange}
                 required={required}
                 className={styles.input}
+                placeholder={placeholder}
                 autoComplete="off"
             />
         </div>

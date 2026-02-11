@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Session from "../models/Session.js";
 
 export const logout = async (req, res) => {
@@ -59,6 +60,10 @@ export const getSessions = async (req, res) => {
 export const revokeSession = async (req, res) => {
     try {
         const { sessionId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(sessionId)) {
+            return res.status(400).json({ message: "Invalid session ID" });
+        }
 
         const session = await Session.findOne({
             _id: sessionId,

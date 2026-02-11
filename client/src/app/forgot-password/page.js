@@ -1,21 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
 import { api } from "@/lib/api";
 
-export default function Login() {
-    const router = useRouter();
-    const [form, setForm] = useState({ email: "", password: "" });
+export default function ForgotPassword() {
+    const [email, setEmail] = useState("");
     const [message, setMessage] = useState(null);
     const [loading, setLoading] = useState(false);
-
-    const handleChange = (field) => (e) => {
-        setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,8 +17,8 @@ export default function Login() {
         setLoading(true);
 
         try {
-            await api.login(form);
-            router.push("/dashboard");
+            const data = await api.forgotPassword({ email });
+            setMessage({ type: "success", text: data.message });
         } catch (err) {
             setMessage({ type: "error", text: err.message });
         } finally {
@@ -35,19 +29,25 @@ export default function Login() {
     return (
         <div className="auth-container">
             <div className="auth-card">
-                <h1>Log In</h1>
+                <h1>Forgot Password</h1>
+                <p style={{ color: "#666", fontSize: "14px", marginBottom: "20px" }}>
+                    Enter your email address and we will send you a link to reset your password.
+                </p>
                 {message && (
                     <div className={`message ${message.type}`}>{message.text}</div>
                 )}
                 <form onSubmit={handleSubmit} className="auth-form">
-                    <FormInput label="Email" id="email" type="email" value={form.email} onChange={handleChange("email")} />
-                    <FormInput label="Password" id="password" type="password" value={form.password} onChange={handleChange("password")} />
-                    <Button type="submit" disabled={loading}>Log In</Button>
+                    <FormInput
+                        label="Email"
+                        id="forgot-email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Button type="submit" disabled={loading}>Send Reset Link</Button>
                 </form>
                 <div className="auth-footer">
-                    Don&apos;t have an account? <Link href="/register">Register</Link>
-                    <br />
-                    <Link href="/forgot-password" style={{ fontSize: "13px" }}>Forgot Password?</Link>
+                    <Link href="/login">Back to Login</Link>
                 </div>
             </div>
         </div>

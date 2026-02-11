@@ -42,4 +42,10 @@ export const api = {
 
     revokeSession: (sessionId) =>
         request(`/session/${sessionId}`, { method: "DELETE" }),
+
+    forgotPassword: (body) =>
+        request("/auth/forgot-password", { method: "POST", body: JSON.stringify(body) }),
+
+    resetPassword: (token, body) =>
+        request(`/auth/reset-password/${token}`, { method: "POST", body: JSON.stringify(body) }),
 };
