@@ -1,12 +1,12 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT),
+  host: "smtp-relay.brevo.com",
+  port: 587,
   secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.BREVO_USER,
+    pass: process.env.BREVO_PASS,
   },
 });
 
@@ -14,7 +14,7 @@ export const sendVerificationEmail = async (to, token) => {
   const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
 
   await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+    from: `KalpIntel <${process.env.BREVO_USER}>`,
     to,
     subject: "Verify Your Email",
     html: `
@@ -39,7 +39,7 @@ export const sendResetEmail = async (to, token) => {
   const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
 
   await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+    from: `KalpIntel <${process.env.BREVO_USER}>`,
     to,
     subject: "Reset Your Password",
     html: `
