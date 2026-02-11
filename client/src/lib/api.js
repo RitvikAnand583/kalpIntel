@@ -9,7 +9,12 @@ const request = async (endpoint, options = {}) => {
         ...options,
     });
 
-    const data = await res.json();
+    let data;
+    try {
+        data = await res.json();
+    } catch {
+        throw new Error("Unable to connect to server");
+    }
 
     if (!res.ok) {
         throw new Error(data.message || "Something went wrong");
