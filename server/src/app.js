@@ -10,7 +10,11 @@ app.use(cors({
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
         const allowed = [process.env.CLIENT_URL];
-        if (allowed.includes(origin) || origin.endsWith(".vercel.app")) {
+        if (
+            allowed.includes(origin) ||
+            origin.endsWith(".vercel.app") ||
+            origin.endsWith(".onrender.com")
+        ) {
             return callback(null, true);
         }
         callback(new Error("Not allowed by CORS"));

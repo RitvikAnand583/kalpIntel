@@ -44,12 +44,17 @@ export const register = async (req, res) => {
             verificationTokenExpiry,
         });
 
-        await sendVerificationEmail(user.email, verificationToken);
+        try {
+            await sendVerificationEmail(user.email, verificationToken);
+        } catch (emailErr) {
+            console.error("Email send failed:", emailErr.message);
+        }
 
         res.status(201).json({
             message: "Registration successful. Please check your email to verify your account.",
         });
     } catch (err) {
+        console.error("Register error:", err.message);
         res.status(500).json({ message: "Server error" });
     }
 };
